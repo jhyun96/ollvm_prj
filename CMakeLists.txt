@@ -8,3 +8,8 @@ add_subdirectory(Hello)
 add_subdirectory(ObjCARC)
 add_subdirectory(Coroutines)
 add_subdirectory(Obfuscation)
+
+add_subdirectory(BasicBlock)
+add_subdirectory(itrBB)
+add_subdirectory(jhyun)
+add_subdirectory(ShowIR)
