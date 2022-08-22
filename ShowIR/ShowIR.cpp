@@ -13,11 +13,18 @@ namespace {
 
     bool runOnFunction(Function &F) override {
       errs() << "ShowIR : "<< F.getName() << "\n";
+
+      for (BasicBlock &BB : F) {
+        if (!BB.hasName())
+          BB.setName("bb");
+      }
+
       for(BasicBlock &BB : F){
-        errs() << "Basic Block : " << BB << "\n";
-        for(Instruction &I : BB) {
-          errs() << "Instruction : " << I << "\n";
-        }
+        errs() << "Basic Block : " << BB.getName() << "\n";
+        errs() << BB << "\n";
+        // for(Instruction &I : BB) {
+        //   errs() << "Instruction : " << I << "\n";
+        // }
       }
       return false;
     }
