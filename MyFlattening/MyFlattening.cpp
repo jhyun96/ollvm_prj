@@ -13,7 +13,8 @@ namespace {
     MyFlattening():FunctionPass(ID){}
 
     virtual bool runOnFunction(Function &F) override {
-      errs() << " Function : [" << F.getName() << "]\n";
+      errs() << "Function : [" << F.getName() << "]\n";
+      errs() << "\n";
 
       for (BasicBlock &BB : F) {  // name a basic block
         if (!BB.hasName())
@@ -23,36 +24,22 @@ namespace {
       for(BasicBlock &BB : F){
         errs() << "BasicBlock : [" << BB.getName() << "]\nInstructions Size : [" << BB.size() << "]\n";
 
-              if (BB.getName() == "bb") {
-        BasicBlock *ifthenBB = &BB;  // BasicBlock 클래스를 사용하기 위해 바꿔줌
+        if (BB.getName() == "bb") {
+          BasicBlock *bb = &BB;  // BasicBlock 클래스를 사용하기 위해 바꿔줌
 
-        BasicBlock::iterator splitPoint = (BasicBlock::iterator)ifthenBB->getFirstNonPHIOrDbgOrLifetime();
-        BasicBlock *trueBB = ifthenBB->splitBasicBlock(splitPoint, "trueBB");
+          BasicBlock::iterator splitPoint = (BasicBlock::iterator)bb->getFirstNonPHIOrDbg();
+          BasicBlock *splitBB = bb->splitBasicBlock(splitPoint, "splitBB");
 
-        ifthenBB->dump();
-        trueBB->dump();
-        //출력
-      }
-
-
-
-
-
-
-        
-        for(Instruction &I : BB) {
-          errs() << "Instruction : [" << I << "]\n";
+          bb->dump();
+          splitBB->dump();
+          //출력
         }
+
+        // for(Instruction &I : BB) {
+        //   errs() << "Instruction : [" << I << "]\n";
+        // }
         errs() << "\n";
       }
-
-
-
-
-
-
-
-
 
       return false;
     }

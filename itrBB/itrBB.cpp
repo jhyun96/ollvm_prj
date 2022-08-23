@@ -12,15 +12,17 @@ namespace {
     static char ID;
     itrBB():FunctionPass(ID){}
 
-    virtual bool runOnFunction(Function &F) override {
-      errs() << " Function : [" << F.getName() << "]\n";
+    bool runOnFunction(Function &F) {
+      errs() << "Function : [" << F.getName() << "]\n";
+      errs() << "\n";
 
       for(BasicBlock &BB : F){
-        errs() << "BasicBlock : [" << BB.getName() << "]\nInstructions Size : [" << BB.size() << "]\n\n";
+        errs() << "BasicBlock : [" << BB.getName() << "]\nInstructions Size : [" << BB.size() << "]\n";
         
         for(Instruction &I : BB) {
           errs() << "Instruction : [" << I << "]\n";
         }
+        errs() << "\n";
       }
       return false;
     }
@@ -35,4 +37,7 @@ static RegisterStandardPasses Y(
     [](const PassManagerBuilder &Builder, legacy::PassManagerBase &PM)
     { PM.add(new itrBB()); });
 
-    
+    // for (BasicBlock &BB : F) {  // name a basic block
+    //     if (!BB.hasName())
+    //       BB.setName("bb");
+    //   }

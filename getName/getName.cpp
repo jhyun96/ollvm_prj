@@ -4,26 +4,27 @@
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 #include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Module.h"
 
 using namespace llvm;
 
 namespace {
-  void nameInstructions(Function &F) {
-   for (auto &Arg : F.args()) {
-     if (!Arg.hasName())
-       Arg.setName("arg");
-   }
+//   void nameInstructions(Function &F) {
+//    for (auto &Arg : F.args()) {
+//      if (!Arg.hasName())
+//        Arg.setName("arg");
+//    }
   
-   for (BasicBlock &BB : F) {
-     if (!BB.hasName())
-       BB.setName("bb");
+//    for (BasicBlock &BB : F) {
+//      if (!BB.hasName())
+//        BB.setName("bb");
   
-     for (Instruction &I : BB) {
-       if (!I.hasName() && !I.getType()->isVoidTy())
-         I.setName("i");
-     }
-   }
- }
+//      for (Instruction &I : BB) {
+//        if (!I.hasName() && !I.getType()->isVoidTy())
+//          I.setName("i");
+//      }
+//    }
+//  }
 
   struct getName : public FunctionPass {
     static char ID;
@@ -34,7 +35,7 @@ namespace {
 
       for (BasicBlock &BB : F) {
         if (!BB.hasName())
-          BB.setName("bb");
+          BB.setName("BB");
       }
 
       for(BasicBlock &BB : F){
