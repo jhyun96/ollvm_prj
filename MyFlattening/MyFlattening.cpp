@@ -18,7 +18,7 @@ namespace {
 
       for (BasicBlock &BB : F) {  // name a basic block
         if (!BB.hasName())
-          BB.setName("bb");
+          BB.setName("BB");
       }
 
       for(BasicBlock &BB : F){
