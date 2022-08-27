@@ -1,4 +1,4 @@
-add_llvm_loadable_module( LLVMShowIR MODULE
+add_llvm_library( LLVMShowIR MODULE
   ShowIR.cpp
 
   PLUGIN_TOOL

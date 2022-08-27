@@ -1,4 +1,4 @@
-add_llvm_loadable_module( LLVMBasicBlock MODULE
+add_llvm_library( LLVMBasicBlock MODULE 
   basic_pass.cpp
 
   PLUGIN_TOOL

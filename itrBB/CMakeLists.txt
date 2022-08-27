@@ -1,4 +1,4 @@
-add_llvm_loadable_module( LLVMitrBB MODULE
+add_llvm_library( LLVMitrBB MODULE 
   itrBB.cpp
 
   PLUGIN_TOOL

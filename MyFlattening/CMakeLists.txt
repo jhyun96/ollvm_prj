@@ -1,4 +1,4 @@
-add_llvm_loadable_module( LLVMMyFlattening MODULE
+add_llvm_library( LLVMMyFlattening MODULE
   MyFlattening.cpp
 
   PLUGIN_TOOL
