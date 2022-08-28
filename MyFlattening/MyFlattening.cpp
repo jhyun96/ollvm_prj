@@ -21,6 +21,7 @@ namespace {
           BB.setName("BB");
       }
 
+
       for(BasicBlock &BB : F){
         errs() << "BasicBlock : [" << BB.getName() << "]\nInstructions Size : [" << BB.size() << "]\n";
 
