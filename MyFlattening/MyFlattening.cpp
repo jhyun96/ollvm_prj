@@ -4,6 +4,9 @@
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 #include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/Transforms/Utils/Cloning.h"
 
 using namespace llvm;
 
@@ -12,34 +15,30 @@ namespace {
     static char ID;
     MyFlattening():FunctionPass(ID){}
 
-    virtual bool runOnFunction(Function &F) override {
+    bool runOnFunction(Function &F) {
       errs() << "Function : [" << F.getName() << "]\n";
       errs() << "\n";
 
-      for (BasicBlock &BB : F) {  // name a basic block
-        if (!BB.hasName())
-          BB.setName("BB");
-      }
-
-
       for(BasicBlock &BB : F){
+        if(BB.getName() == "if.then"){
+        
+
+        BasicBlock *entryBB = &BB;
+        BasicBlock::iterator splitPoint = (BasicBlock::iterator)entryBB->getFirstNonPHIOrDbgOrLifetime();
+        BasicBlock *trueBB = entryBB->splitBasicBlock(++splitPoint, "trueBB");
+        
+
         errs() << "BasicBlock : [" << BB.getName() << "]\nInstructions Size : [" << BB.size() << "]\n";
-
-        if (BB.getName() == "bb") {
-          BasicBlock *bb = &BB;  // BasicBlock 클래스를 사용하기 위해 바꿔줌
-
-          BasicBlock::iterator splitPoint = (BasicBlock::iterator)bb->getFirstNonPHIOrDbg();
-          BasicBlock *splitBB = bb->splitBasicBlock(splitPoint, "splitBB");
-
-          bb->dump();
-          splitBB->dump();
-          //출력
+        
+        for(Instruction &I : BB) {
+          errs() << "Instruction : [" << I << "]\n";
         }
-
-        // for(Instruction &I : BB) {
-        //   errs() << "Instruction : [" << I << "]\n";
-        // }
         errs() << "\n";
+
+
+        errs() << "trueBB :[" << *trueBB << "]\n";
+
+        }
       }
 
       return false;
@@ -48,11 +47,10 @@ namespace {
 }
 
 char MyFlattening::ID = 0;
-static RegisterPass<MyFlattening> X("MyFlattening", "Creating Control Flow Flattening by Jhyun");
+static RegisterPass<MyFlattening> X("MyFlattening", "Control Flow Flattening");
 
 static RegisterStandardPasses Y(
     PassManagerBuilder::EP_EarlyAsPossible,
     [](const PassManagerBuilder &Builder, legacy::PassManagerBase &PM)
     { PM.add(new MyFlattening()); });
-
     
