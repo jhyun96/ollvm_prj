@@ -7,40 +7,42 @@
 
 using namespace llvm;
 
-// namespace {
-//     struct JhyunPass : FunctionPass {
-//         static char ID;
-//         JhyunPass() : FunctionPass(ID) {}
-
-//         bool runOnFunction(Function &F) override {
-//             errs() << "JhyunPass: ";
-//             errs().write_escaped(F.getName()) << '\n';
-//             return false;
-//         }
-//     };
-// }
-
-// char JhyunPass::ID = 0;
-
-// static RegisterPass<JhyunPass> X("JhyunPass", "I am Jhyun Hello", false, false);
-
-// static RegisterStandardPasses Y(
-//     PassManagerBuilder::EP_EarlyAsPossible,
-//     [](const PassManagerBuilder &Builder,
-//         legacy::PassManagerBase &PM) { PM.add(new JhyunPass());});
-
 namespace {
   struct JhyunPass : public FunctionPass {
     static char ID;
     JhyunPass() : FunctionPass(ID) {}
 
+    // vector<BasicBlock *> origBB;
 
-    virtual bool runOnFunction(Function &F) {
+    bool runOnFunction(Function &F) {
       errs() << "- Start of function [" << F.getName() << "]\n";
+      
 
-      for (BasicBlock &BB : F)
-        errs() << "- Start of Basicblock ["<< BB.getName() << "], num of instructions ["
-                   << BB.size() << "] instructions.\n";
+        for (BasicBlock &BB : F) {
+          if(BB.getName() == "entry"){
+            BasicBlock *entryBB = &BB;
+            errs() << *entryBB << "\n"; 
+
+            BasicBlock::iterator splitPosition = (BasicBlock::iterator)entryBB->getFirstNonPHIOrDbgOrLifetime();
+            errs() << "splitPosition : " << *splitPosition << "\n";
+            BasicBlock* SaveBB = entryBB->splitBasicBlock(splitPosition, "SaveBB");
+            errs() << "SaveBB" << *SaveBB << "\n";
+
+            
+
+            
+          }
+        }
+
+        for (BasicBlock &BB : F){
+              errs() << "- Start of Basicblock ["<< BB.getName() << "], num of instructions ["
+                      << BB.size() << "] instructions.\n";
+
+              for(Instruction &I : BB) {
+                errs() << "Instruction : [" << I << "]\n";
+              }
+              errs() << "\n";
+        }
 
       return false;
     }

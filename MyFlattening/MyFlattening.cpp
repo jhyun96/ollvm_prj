@@ -7,6 +7,7 @@
 #include "llvm/IR/Constants.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/Transforms/Utils/Cloning.h"
+#include "llvm/Transforms/Scalar.h"
 
 using namespace llvm;
 
@@ -15,33 +16,29 @@ namespace {
     static char ID;
     MyFlattening():FunctionPass(ID){}
 
-    bool runOnFunction(Function &F) {
-      errs() << "Function : [" << F.getName() << "]\n";
-      errs() << "\n";
+    bool runOnFunction(Function &f) {
+      errs() << "- Start of function [" << f.getName() << "]\n";
+      if(f.getName() == "myOb"){
+        for (BasicBlock &bb : f){
+          errs() << "- Start of Basicblock ["<< bb.getName() << "], num of instructions ["
+                    << bb.size() << "] instructions.\n";
 
-      for(BasicBlock &BB : F){
-        if(BB.getName() == "if.then"){
-        
-
-        BasicBlock *entryBB = &BB;
-        BasicBlock::iterator splitPoint = (BasicBlock::iterator)entryBB->getFirstNonPHIOrDbgOrLifetime();
-        BasicBlock *trueBB = entryBB->splitBasicBlock(++splitPoint, "trueBB");
-        
-
-        errs() << "BasicBlock : [" << BB.getName() << "]\nInstructions Size : [" << BB.size() << "]\n";
-        
-        for(Instruction &I : BB) {
-          errs() << "Instruction : [" << I << "]\n";
+                for(Instruction &i : bb) {
+                  errs() << "Instruction : [" << i << "]\n";
+                }
+                errs() << "\n";
         }
-        errs() << "\n";
 
+        for (BasicBlock &bb : f) {
 
-        errs() << "trueBB :[" << *trueBB << "]\n";
+          BasicBlock *entry_bb = &bb;
 
+          errs() << "entry_bb" << *entry_bb << "\n"; 
         }
+
+
+        return false;
       }
-
-      return false;
     }
   };
 }
