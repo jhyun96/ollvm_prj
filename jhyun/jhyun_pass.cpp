@@ -5,37 +5,66 @@
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 
+#include "llvm/IR/Constant.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/Transforms/IPO.h"
+#include "llvm/Transforms/Scalar.h"
+
 using namespace llvm;
+using namespace std;
 
 namespace {
   struct JhyunPass : public FunctionPass {
     static char ID;
     JhyunPass() : FunctionPass(ID) {}
 
-    // vector<BasicBlock *> origBB;
+    
 
     bool runOnFunction(Function &F) {
       errs() << "- Start of function [" << F.getName() << "]\n";
-      
 
         for (BasicBlock &BB : F) {
-          if(BB.getName() == "entry"){
+             if(BB.getName() == "entry"){
             BasicBlock *entryBB = &BB;
             errs() << *entryBB << "\n"; 
 
             BasicBlock::iterator splitPosition = (BasicBlock::iterator)entryBB->getFirstNonPHIOrDbgOrLifetime();
-            errs() << "splitPosition : " << *splitPosition << "\n";
+            errs() << "splitPosition : " << *splitPosition << "\n\n";
             BasicBlock* SaveBB = entryBB->splitBasicBlock(splitPosition, "SaveBB");
-            errs() << "SaveBB" << *SaveBB << "\n";
+            errs() << "[SaveBB]" << *SaveBB << "\n";
+          }
 
-            
+          if(BB.getName() == "SaveBB") {
+            BasicBlock *if_then_BB = &BB;
 
-            
+            BasicBlock::iterator splitPosition = (BasicBlock::iterator)if_then_BB->getFirstNonPHIOrDbgOrLifetime();
+            BasicBlock *true_BB = if_then_BB->splitBasicBlock(splitPosition, "true_BB");
+
+            errs() << "Before\n";
+            errs() << "if_then_BB : " << *if_then_BB << "\n\n";
+
+
+            Value *LHS = ConstantInt::get(Type::getInt32Ty(F.getContext()), 1);
+            Value *RHS = ConstantInt::get(Type::getInt32Ty(F.getContext()), 1);
+
+            ICmpInst *condInstruction = new ICmpInst(if_then_BB->getFirstNonPHIOrDbgOrLifetime(), ICmpInst::ICMP_EQ, LHS, RHS, "newcond");
+            BranchInst::Create(true_BB, true_BB, condInstruction, if_then_BB);
+
+            BasicBlock::iterator toRemove = if_then_BB->begin();
+            toRemove++;
+            Instruction *instToRemove = &(*toRemove);
+            instToRemove->dropAllReferences();
+            instToRemove->eraseFromParent();
+
+            errs() << "After\n";
+            errs() << "if_then_BB : " << *if_then_BB << "\n\n";
           }
         }
 
+        
+
         for (BasicBlock &BB : F){
-              errs() << "- Start of Basicblock ["<< BB.getName() << "], num of instructions ["
+              errs() << "\n - Start of Basicblock ["<< BB.getName() << "], num of instructions ["
                       << BB.size() << "] instructions.\n";
 
               for(Instruction &I : BB) {
@@ -50,7 +79,7 @@ namespace {
 }
 
 char JhyunPass::ID = 0;
-static RegisterPass<JhyunPass> X("JhyunPass", "Iterate over the basic block inside a function",false, false);
+static RegisterPass<JhyunPass> X("J", "Iterate over the basic block inside a function",false, false);
 
 static RegisterStandardPasses Y(
     PassManagerBuilder::EP_EarlyAsPossible,
