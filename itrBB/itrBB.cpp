@@ -13,14 +13,14 @@ namespace {
     itrBB():FunctionPass(ID){}
 
     bool runOnFunction(Function &F) {
-      errs() << "Function : [" << F.getName() << "]\n";
+      errs() << "Function : " << F.getName() << "\n";
       errs() << "\n";
 
       for(BasicBlock &BB : F){
-        errs() << "BasicBlock : [" << BB.getName() << "]\nInstructions Size : [" << BB.size() << "]\n";
+        errs() << "BasicBlock : " << BB.getName() << "\nInstructions Size : " << BB.size() << "\n";
         
         for(Instruction &I : BB) {
-          errs() << "Instruction : [" << I << "]\n";
+          errs() << "Instruction : " << I << "\n";
         }
         errs() << "\n";
       }

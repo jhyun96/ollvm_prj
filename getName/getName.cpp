@@ -33,10 +33,10 @@ namespace {
     virtual bool runOnFunction(Function &F) override {
       errs() << "Function : [" << F.getName() << "]\n";
 
-      for (BasicBlock &BB : F) {
-        if (!BB.hasName())
-          BB.setName("BB");
-      }
+      // for (BasicBlock &BB : F) {
+      //   if (!BB.hasName())
+      //     BB.setName("BB");
+      // }
 
       for(BasicBlock &BB : F){
         errs() << "BasicBlock : [" << BB.getName() << "]\nInstructions Size : [" << BB.size() << "]\n";

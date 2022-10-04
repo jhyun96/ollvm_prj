@@ -9,6 +9,7 @@
 #include "llvm/IR/Instructions.h"
 #include "llvm/Transforms/IPO.h"
 #include "llvm/Transforms/Scalar.h"
+#include "llvm/IR/IRBuilder.h"
 
 using namespace llvm;
 using namespace std;
@@ -23,8 +24,8 @@ namespace {
     bool runOnFunction(Function &F) {
       errs() << "- Start of function [" << F.getName() << "]\n";
 
-        for (BasicBlock &BB : F) {
-             if(BB.getName() == "entry"){
+      for (BasicBlock &BB : F) {
+          if(BB.getName() == "entry"){
             BasicBlock *entryBB = &BB;
             errs() << *entryBB << "\n"; 
 
@@ -34,35 +35,55 @@ namespace {
             errs() << "[SaveBB]" << *SaveBB << "\n";
           }
 
-          if(BB.getName() == "SaveBB") {
-            BasicBlock *if_then_BB = &BB;
+      if(BB.getName() == "SaveBB") {
+        BasicBlock *if_then_BB = &BB;
 
-            BasicBlock::iterator splitPosition = (BasicBlock::iterator)if_then_BB->getFirstNonPHIOrDbgOrLifetime();
-            BasicBlock *true_BB = if_then_BB->splitBasicBlock(splitPosition, "true_BB");
+        BasicBlock::iterator splitPosition = (BasicBlock::iterator)if_then_BB->getFirstNonPHIOrDbgOrLifetime();
+        BasicBlock *true_BB = if_then_BB->splitBasicBlock(splitPosition, "true_BB");
 
-            errs() << "Before\n";
-            errs() << "if_then_BB : " << *if_then_BB << "\n\n";
+        errs() << "Before\n";
+        errs() << "if_then_BB : " << *if_then_BB << "\n\n";
+
+        // IntegerType *I32 = Type::getInt32Ty(F.getContext());
+        // errs() << "I32 : " << *I32 << "\n\n";
+
+        // AllocaInst* var_i = new AllocaInst(Type::getInt32Ty(F.getContext()), 0, "MyValue", if_then_BB); 
+        // errs() << "var_i : " << *var_i << "\n\n";
+        // LoadInst* load = new LoadInst(var_i, "asdf", true_BB);
+        // new StoreInst(var_i, load->getPointerOperand(), true_BB);
 
 
-            Value *LHS = ConstantInt::get(Type::getInt32Ty(F.getContext()), 1);
-            Value *RHS = ConstantInt::get(Type::getInt32Ty(F.getContext()), 1);
 
-            ICmpInst *condInstruction = new ICmpInst(if_then_BB->getFirstNonPHIOrDbgOrLifetime(), ICmpInst::ICMP_EQ, LHS, RHS, "newcond");
-            BranchInst::Create(true_BB, true_BB, condInstruction, if_then_BB);
 
-            BasicBlock::iterator toRemove = if_then_BB->begin();
-            toRemove++;
-            Instruction *instToRemove = &(*toRemove);
-            instToRemove->dropAllReferences();
-            instToRemove->eraseFromParent();
+        Value *LHS = ConstantInt::get(Type::getInt32Ty(F.getContext()), 1);
+        Value *RHS = ConstantInt::get(Type::getInt32Ty(F.getContext()), 1);
 
-            errs() << "After\n";
-            errs() << "if_then_BB : " << *if_then_BB << "\n\n";
-          }
-        }
+        // BinaryOperator *op =  BinaryOperator::Create(Instruction::Add, LHS, 1, true);
 
+        // Instruction* AddInst;
+
+        // Instruction* SubInst = BinaryOperator(Instruction::Sub, AddInst->getOperand(0), AddInst->getOperand(1), "subtmp", AddInst);
+
+        ICmpInst *condInstruction = new ICmpInst(if_then_BB->getFirstNonPHIOrDbgOrLifetime(), ICmpInst::ICMP_EQ, LHS, RHS, "newcond");
         
+        // BasicBlock *switchBB = BasicBlock::Create(F.getContext(), "", nullptr, true_BB);
+        // switchBB->moveAfter(true_BB);
+        // BranchInst::Create(true_BB, true_BB, condInstruction, if_then_BB);
 
+
+        // BasicBlock::iterator toRemove = if_then_BB->begin();
+        // toRemove++;
+        // Instruction *instToRemove = &(*toRemove);
+        // instToRemove->dropAllReferences();
+        // instToRemove->eraseFromParent();
+
+        errs() << "After\n";
+        errs() << "if_then_BB : " << *if_then_BB << "\n\n";
+      }
+    }
+
+        //전체 IR 출력
+        errs() << "===============전체 IR 출력==============\n";
         for (BasicBlock &BB : F){
               errs() << "\n - Start of Basicblock ["<< BB.getName() << "], num of instructions ["
                       << BB.size() << "] instructions.\n";
