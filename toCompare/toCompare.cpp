@@ -13,6 +13,8 @@
 #include "llvm/IR/InstIterator.h"
 #include "llvm/IR/IRBuilder.h"
 
+#include "llvm/IR/Use.h"
+
 using namespace llvm;
 using namespace std;
 
@@ -30,14 +32,14 @@ namespace {
       return splittedBasicBlock;
     }
 
-    void deleteInstructionWithPosition(BasicBlock *target_basicblock, int number_to_move) {
-    BasicBlock::iterator to_remove = target_basicblock->begin();
-    for (int counter = 0; counter < number_to_move; counter++) {
-      to_remove++;
+    void deleteInstructionByLinePoint(BasicBlock *target_basicblock, int line_point) {
+    BasicBlock::iterator remove_line = target_basicblock->begin();
+    for (int count = 0; count < line_point; count++) {
+      remove_line++;
     }
-    Instruction *inst_to_remove = &(*to_remove);
-    inst_to_remove->dropAllReferences();
-    inst_to_remove->eraseFromParent();
+    Instruction *remove_instruction = &(*remove_line);
+    remove_instruction->dropAllReferences();
+    remove_instruction->eraseFromParent();
     }
 
     bool runOnFunction(Function& f) {
@@ -61,9 +63,11 @@ namespace {
           // entry_bb에 retval, i에 해당하는 변수 할당
           Value *value_0 = Constant::getNullValue(Type::getInt32Ty(f.getContext()));
           builder.CreateStore(value_0, var_i, false);
+
+
           // i 변수에 0값 넣어줌
           BranchInst::Create(if_then_bb, entry_bb);
-          deleteInstructionWithPosition(entry_bb,0);
+          deleteInstructionByLinePoint(entry_bb,0);
           BasicBlock::iterator to_remove = entry_bb->begin();
           Instruction* inst_to_remove = &(*to_remove); 
           // inst_to_remove -> dropAllReferences();
