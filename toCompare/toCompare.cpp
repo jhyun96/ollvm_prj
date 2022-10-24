@@ -72,6 +72,8 @@ namespace {
           Instruction* inst_to_remove = &(*to_remove); 
           // inst_to_remove -> dropAllReferences();
           inst_to_remove -> eraseFromParent();
+
+          
     
 
           // if 조건문 생성
